@@ -1,10 +1,26 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+import { MongooseConfigService } from './config/MongooseConfigService';
+import configuration from './config/configuration';
+import { UsersModule } from './users/users.module';
+import 'dotenv/config';
+import { AuthModule } from './auth/auth.module';
+import { CostsModule } from './costs/costs.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useClass: MongooseConfigService,
+    }),
+    ConfigModule.forRoot({
+      load: [configuration],
+    }),
+
+    UsersModule,
+    AuthModule,
+    CostsModule,
+  ],
 })
 export class AppModule {}
